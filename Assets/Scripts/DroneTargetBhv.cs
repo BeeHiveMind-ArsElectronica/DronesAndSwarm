@@ -17,7 +17,7 @@ public class DroneTargetBhv : MonoBehaviour
         m_boundingVol = FindObjectOfType<BoundingVolBhv>();
     }
 
-    int DroneId()
+    public int DroneId()
     {
         DroneObjectBhv dobhv = droneObj.GetComponent<DroneObjectBhv>();
         int droneId = dobhv.droneId;

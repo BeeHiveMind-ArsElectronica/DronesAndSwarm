@@ -137,14 +137,17 @@ public class VNectModel : MonoBehaviour
     /// <returns></returns>
     public JointPoint[] Init()
     {
-        //if (!ShowModel)
-        //{
-        //    SkinnedMeshRenderer[] mrs = GetComponentsInChildren<SkinnedMeshRenderer>();
-        //    foreach (var mr in mrs)
-        //    {
-        //        mr.enabled = false;
-        //    }
-        //}
+        MeshRenderer[] mrs = GetComponentsInChildren<MeshRenderer>();
+        foreach (var mr in mrs)
+        {
+            mr.enabled = ShowModel;
+        }
+
+        SkinnedMeshRenderer[] smrs = GetComponentsInChildren<SkinnedMeshRenderer>();
+        foreach (var mr in smrs)
+        {
+            mr.enabled = ShowModel;
+        }   
 
         jointPoints = new JointPoint[PositionIndex.Count.Int()];
         for (var i = 0; i < PositionIndex.Count.Int(); i++) jointPoints[i] = new JointPoint();
