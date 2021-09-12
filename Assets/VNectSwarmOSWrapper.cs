@@ -112,6 +112,8 @@ public class VNectSwarmOSWrapper : MonoBehaviour
             diff = Vector3.ClampMagnitude(diff, MaxJointToRefDist);
 
             var bbDiff = Main.Instance.BoundingVolMax - Main.Instance.BoundingVolMin;
+            var height = bbDiff.y;
+
             innerRadius = new[] { bbDiff.x, bbDiff.y, bbDiff.z }.Min();
 
             var mid = (Main.Instance.BoundingVolMax + Main.Instance.BoundingVolMin) / 2;
@@ -120,6 +122,8 @@ public class VNectSwarmOSWrapper : MonoBehaviour
             Vector3 targetPosition = diff.Remap(Vector3.zero, new Vector3(MaxJointToRefDist, MaxJointToRefDist, MaxJointToRefDist), Vector3.zero, new Vector3(innerRadius, innerRadius, innerRadius));
             targetPosition = targetPosition + midFloor;
             dronePos[i] = Vector3.Lerp(dronePos[i], targetPosition, 0.25f); // smoothing
+
+            var yPercent = (dronePos[i].y - Main.Instance.BoundingVolMin.y) / height;
 
             if (!Simulation)
             {
