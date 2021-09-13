@@ -14,8 +14,8 @@ public static class ExtensionMethods
     public static Vector3 Remap(this Vector3 value, Vector3 from1, Vector3 to1, Vector3 from2, Vector3 to2)
     {
         var n_x = value.x.Remap(from1.x, to1.x, from2.x, to2.x);
-        var n_y = value.x.Remap(from1.y, to1.y, from2.y, to2.y);
-        var n_z = value.x.Remap(from1.z, to1.z, from2.z, to2.z);
+        var n_y = value.y.Remap(from1.y, to1.y, from2.y, to2.y);
+        var n_z = value.z.Remap(from1.z, to1.z, from2.z, to2.z);
         return new Vector3(n_x, n_y, n_z);
     }
 }
