@@ -42,7 +42,7 @@ public class AudioManager : MonoBehaviour
         float average = _sum / _maxJoints;
         //Debug.Log(i + "Y: " + yPercent);
 
-        music = average * 10;
+        volume = average * 10;
         audio_source.volume = volume;
         audio_source.pitch = pitch;
 
