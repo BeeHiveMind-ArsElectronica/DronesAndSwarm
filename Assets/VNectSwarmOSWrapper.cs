@@ -13,9 +13,9 @@ public static class ExtensionMethods
 
     public static Vector3 Remap(this Vector3 value, Vector3 from1, Vector3 to1, Vector3 from2, Vector3 to2)
     {
-        var n_x = (value.x - from1.x) / (to1.x - from1.x) * (to2.x - from2.x) + from2.x;
-        var n_y = (value.y - from1.y) / (to1.y - from1.y) * (to2.y - from2.y) + from2.y;
-        var n_z = (value.z - from1.z) / (to1.z - from1.z) * (to2.z - from2.z) + from2.z;
+        var n_x = value.x.Remap(from1.x, to1.x, from2.x, to2.x);
+        var n_y = value.x.Remap(from1.y, to1.y, from2.y, to2.y);
+        var n_z = value.x.Remap(from1.z, to1.z, from2.z, to2.z);
         return new Vector3(n_x, n_y, n_z);
     }
 }
@@ -141,7 +141,8 @@ public class VNectSwarmOSWrapper : MonoBehaviour
 
             if (!LocalSimulation)
             {
-                var m_curTarget = Util.ClampToMinHeight(dronePos[i], Main.Instance.MinimumFlightHeight);
+                var m_curTarget = Util.ClampToBoundaries(dronePos[i], Main.Instance.BoundingVolMin, Main.Instance.BoundingVolMax);
+                m_curTarget = Util.ClampToMinHeight(m_curTarget, Main.Instance.MinimumFlightHeight);
                 var tgt = Util.ConvertToGcCoords(Util.Vec3ToVec4(m_curTarget, DroneVelocity));
                 TcpMgr.Instance.CmdExtWaypointFollow(Util.SingleIdToSet(drones[i].DroneId()), tgt, 0.0f);
             }
