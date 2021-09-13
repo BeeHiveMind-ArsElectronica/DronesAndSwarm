@@ -32,12 +32,12 @@ public class AudioManager : MonoBehaviour
     void Update()
     {
         float[] _heightJoints = wrapper.GetYPercent();
-        int _maxJoints = wrapper.GetNumMappedJoints();
+        int _maxJoints = _heightJoints.Length;
         float _sum = 0.0f;
 
         for (int i = 0; i < _maxJoints; i++)
         {
-            _sum = _sum + _heightJoints[i];
+            _sum += _heightJoints[i];
         }
         float average = _sum / _maxJoints;
         //Debug.Log(i + "Y: " + yPercent);

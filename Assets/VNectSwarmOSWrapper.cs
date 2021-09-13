@@ -148,5 +148,4 @@ public class VNectSwarmOSWrapper : MonoBehaviour
     }
 
     public float[] GetYPercent() { return yPercent; }
-    public int GetNumMappedJoints() { return MappedJoints.Length; }
 }
