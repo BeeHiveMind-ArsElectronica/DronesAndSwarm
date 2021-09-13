@@ -49,6 +49,8 @@ public class VNectSwarmOSWrapper : MonoBehaviour
     private Vector3[] dronePos;
     private float innerRadius;
 
+    public float[] yPercent;
+
 
     void Start()
     {
@@ -94,6 +96,7 @@ public class VNectSwarmOSWrapper : MonoBehaviour
         //}
 
         dronePos = new Vector3[MappedJoints.Length];
+        yPercent = new float[MappedJoints.Length];
     }
 
     void Update()
@@ -134,7 +137,7 @@ public class VNectSwarmOSWrapper : MonoBehaviour
             targetPosition = targetPosition + midFloor;
             dronePos[i] = Vector3.Lerp(dronePos[i], targetPosition, 0.25f); // smoothing
 
-            var yPercent = (dronePos[i].y - Main.Instance.BoundingVolMin.y) / height;
+            yPercent[i] = (dronePos[i].y - Main.Instance.BoundingVolMin.y) / height;
 
             if (!LocalSimulation)
             {
@@ -154,4 +157,6 @@ public class VNectSwarmOSWrapper : MonoBehaviour
             //print(pos);
         }
     }
+
+    public float[] GetYPercent() { return yPercent; }
 }
