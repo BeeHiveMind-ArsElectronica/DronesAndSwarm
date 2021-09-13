@@ -13,6 +13,9 @@ public class AudioManager : MonoBehaviour
 
     public VNectSwarmOSWrapper wrapper;
 
+    public GameObject visualDebugVolume;
+    public GameObject visualDebugPitch;
+
     void Start()
     {
 
@@ -31,8 +34,11 @@ public class AudioManager : MonoBehaviour
 
     void Update()
     {
-        //AverageVolumeJoints();
+        /*AverageVolumeJoints();*/
         LeftHandVolumeRightHandPitch();
+
+        // Debug
+        VisualDebug();
     }
 
 
@@ -62,5 +68,12 @@ public class AudioManager : MonoBehaviour
 
         audio_source.volume = volume;
         audio_source.pitch = pitch;
+    }
+
+    void VisualDebug()
+    {
+        visualDebugPitch.transform.localScale = new Vector3(visualDebugVolume.transform.localScale.x, volume, visualDebugVolume.transform.localScale.z);
+        visualDebugVolume.transform.localScale = new Vector3(visualDebugVolume.transform.localScale.x, pitch, visualDebugVolume.transform.localScale.z);
+
     }
 }
