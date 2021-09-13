@@ -29,7 +29,7 @@ public class VNectSwarmOSWrapper : MonoBehaviour
     public bool Ready;
 
     public float MinScoreThreshold = 0.3f;
-    public bool Simulation = true;
+    public bool LocalSimulation = true;
     public float DroneVelocity = 0.8f;
 
     public bool DebugMode = true;
@@ -41,9 +41,9 @@ public class VNectSwarmOSWrapper : MonoBehaviour
     public PositionIndex[] MappedJoints;
     [SerializeField]
     public PositionIndex RefJoint;
-    public Vector3 OffsetPosition = new Vector3(0.0f, 0.5f, 0.0f);
-    public float Scale = 1f;
-    public float MaxJointToRefDist = 250f;
+    //public Vector3 OffsetPosition = new Vector3(0.0f, 0.5f, 0.0f);
+    //public float Scale = 1f;
+    public float MaxJointToRefDist = 250f; // Tested max value between a hand and the hip;
 
     private DroneTargetBhv[] drones;
     private Vector3[] dronePos;
@@ -55,7 +55,18 @@ public class VNectSwarmOSWrapper : MonoBehaviour
         if (DroneVelocity <= 0)
             DroneVelocity = Main.Instance.StandardFlightVelocity;
 
-        Init();
+        if (LocalSimulation)
+        {
+            Init();
+        } else
+        {
+            UdpServer.Instance.SceneInitialized.AddListener(() =>
+            {
+                Init();
+            });
+        }
+        //Init();
+
         //dronePos = new Vector3[MappedJoints.Length];
 
     }
@@ -87,7 +98,7 @@ public class VNectSwarmOSWrapper : MonoBehaviour
 
     void Update()
     {
-        if (!Simulation)
+        if (!LocalSimulation)
         {
             if (MappedJoints.Length != DroneCount)
             {
@@ -125,7 +136,7 @@ public class VNectSwarmOSWrapper : MonoBehaviour
 
             var yPercent = (dronePos[i].y - Main.Instance.BoundingVolMin.y) / height;
 
-            if (!Simulation)
+            if (!LocalSimulation)
             {
                 var m_curTarget = Util.ClampToMinHeight(dronePos[i], Main.Instance.MinimumFlightHeight);
                 var tgt = Util.ConvertToGcCoords(Util.Vec3ToVec4(m_curTarget, DroneVelocity));

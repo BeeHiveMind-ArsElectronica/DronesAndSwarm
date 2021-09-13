@@ -6,9 +6,11 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using UnityEngine.Events;
 
 public class UdpServer : MonoBehaviour {
     public event SimpleDelegate UdpServerInitialized;
+    public UnityEvent SceneInitialized;
 
     public int Port;
 
@@ -321,6 +323,8 @@ public class UdpServer : MonoBehaviour {
                             }
                             
                             ois[objIdx] = oi;
+
+                            SceneInitialized.Invoke(); // TODO: Check
                         }
                     }
                 }
