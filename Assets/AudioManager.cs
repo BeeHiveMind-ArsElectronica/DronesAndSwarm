@@ -31,6 +31,13 @@ public class AudioManager : MonoBehaviour
 
     void Update()
     {
+        //AverageVolumeJoints();
+        LeftHandVolumeRightHandPitch();
+    }
+
+
+    void AverageVolumeJoints()
+    {
         float[] _heightJoints = wrapper.GetYPercent();
         int _maxJoints = _heightJoints.Length;
         float _sum = 0.0f;
@@ -40,11 +47,20 @@ public class AudioManager : MonoBehaviour
             _sum += _heightJoints[i];
         }
         float average = _sum / _maxJoints;
-        //Debug.Log(i + "Y: " + yPercent);
 
         volume = average * 10;
+        Debug.Log("Volume: " + volume);
         audio_source.volume = volume;
         audio_source.pitch = pitch;
+    }
 
+    void LeftHandVolumeRightHandPitch()
+    {
+        float[] _heightJoints = wrapper.GetYPercent();
+        volume = _heightJoints[0] * 10;
+        pitch = _heightJoints[1] * 10;
+
+        audio_source.volume = volume;
+        audio_source.pitch = pitch;
     }
 }
