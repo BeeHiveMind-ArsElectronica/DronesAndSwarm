@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -30,12 +32,12 @@ public class VNectSwarmOSWrapper : MonoBehaviour
 
     public float MinScoreThreshold = 0.3f;
     public bool LocalSimulation = true;
+    public bool BodyTracking = false;
     public float DroneVelocity = 0.8f;
 
-    public bool DebugMode = true;
+    //public bool DebugMode = true;
 
     public VNectModel vnectModel;
-
 
     [SerializeField]
     public PositionIndex[] MappedJoints;
@@ -49,8 +51,17 @@ public class VNectSwarmOSWrapper : MonoBehaviour
     private Vector3[] dronePos;
     private float innerRadius;
 
+    /// <summary>
+    /// To carry out callbacks from other threads (such as UDP)
+    /// </summary>
+    private ConcurrentQueue<Action> MainThreadQueue = new ConcurrentQueue<Action>();
+
     public float[] yPercent;
 
+    private void Awake()
+    {
+        vnectModel.gameObject.SetActive(BodyTracking);
+    }
 
     void Start()
     {
@@ -64,9 +75,13 @@ public class VNectSwarmOSWrapper : MonoBehaviour
         {
             UdpServer.Instance.SceneInitialized.AddListener(() =>
             {
-                Init();
+                MainThreadQueue.Enqueue(Init);
             });
         }
+
+        dronePos = new Vector3[MappedJoints.Length];
+        yPercent = new float[MappedJoints.Length];
+
         //Init();
 
         //dronePos = new Vector3[MappedJoints.Length];
@@ -95,19 +110,28 @@ public class VNectSwarmOSWrapper : MonoBehaviour
         //    innerRadius = new[] { outerRadiusVec.x, outerRadiusVec.y, outerRadiusVec.z }.Min();
         //}
 
-        dronePos = new Vector3[MappedJoints.Length];
-        yPercent = new float[MappedJoints.Length];
+        //dronePos = new Vector3[MappedJoints.Length];
+        //yPercent = new float[MappedJoints.Length];
     }
 
     void Update()
     {
-        if (!LocalSimulation)
+        while (!MainThreadQueue.IsEmpty)
         {
-            if (MappedJoints.Length != DroneCount)
+            Action action;
+            if (MainThreadQueue.TryDequeue(out action))
             {
-                return;
+                action.Invoke();
             }
         }
+
+        //if (!LocalSimulation)
+        //{
+        //    if (MappedJoints.Length != DroneCount)
+        //    {
+        //        return;
+        //    }
+        //}
 
         Vector3 refPos = vnectModel.JointPoints[RefJoint.Int()].Pos3D;
         for (int i = 0; i < MappedJoints.Length; i++)
@@ -128,21 +152,27 @@ public class VNectSwarmOSWrapper : MonoBehaviour
             var bbDiff = Main.Instance.BoundingVolMax - Main.Instance.BoundingVolMin;
             var height = bbDiff.y;
 
-            innerRadius = new[] { bbDiff.x, bbDiff.y, bbDiff.z }.Min();
+            innerRadius = new[] { bbDiff.x, bbDiff.y, bbDiff.z }.Min() / 2;
 
             var mid = (Main.Instance.BoundingVolMax + Main.Instance.BoundingVolMin) / 2;
             var midFloor = new Vector3(mid.x, Main.Instance.BoundingVolMin.y, mid.z);
 
-            Vector3 targetPosition = diff.Remap(Vector3.zero, new Vector3(MaxJointToRefDist, MaxJointToRefDist, MaxJointToRefDist), Vector3.zero, new Vector3(innerRadius, innerRadius, innerRadius));
-            targetPosition = targetPosition + midFloor;
+            Vector3 targetPosition = diff.Remap(new Vector3(-MaxJointToRefDist, -MaxJointToRefDist, -MaxJointToRefDist), new Vector3(MaxJointToRefDist, MaxJointToRefDist, MaxJointToRefDist),
+                new Vector3(-innerRadius, -innerRadius, -innerRadius), new Vector3(innerRadius, innerRadius, innerRadius));
+
+            targetPosition = targetPosition + mid; // midFloor;
+            if (i == 0)
+                print(targetPosition);
+
             dronePos[i] = Vector3.Lerp(dronePos[i], targetPosition, 0.25f); // smoothing
 
-            yPercent[i] = (dronePos[i].y - Main.Instance.BoundingVolMin.y) / height;
+            yPercent[i] = Mathf.Clamp(dronePos[i].y - Main.Instance.BoundingVolMin.y, Main.Instance.BoundingVolMin.y, Main.Instance.BoundingVolMax.y) / height;
 
-            if (!LocalSimulation)
+            if (!LocalSimulation && drones.Length >= MappedJoints.Length)
             {
                 var m_curTarget = Util.ClampToBoundaries(dronePos[i], Main.Instance.BoundingVolMin, Main.Instance.BoundingVolMax);
-                m_curTarget = Util.ClampToMinHeight(m_curTarget, Main.Instance.MinimumFlightHeight);
+                //var m_curTarget = dronePos[i];
+                m_curTarget = Util.ClampToMinHeight(m_curTarget, Main.Instance.MinimumFlightHeight + Main.Instance.BoundingVolMin.y);
                 var tgt = Util.ConvertToGcCoords(Util.Vec3ToVec4(m_curTarget, DroneVelocity));
                 TcpMgr.Instance.CmdExtWaypointFollow(Util.SingleIdToSet(drones[i].DroneId()), tgt, 0.0f);
             }

@@ -108,6 +108,8 @@ public class UdpServer : MonoBehaviour {
                     tobhv = to.GetComponent<DroneTargetBhv>();
                     tobhv.droneObj = dobhv;
                     Main.Instance.DictDroneTargets[to.name] = to;
+
+                    SceneInitialized.Invoke();
                 }
 
                 if (dobhv == null)
@@ -121,7 +123,6 @@ public class UdpServer : MonoBehaviour {
                     return;
                 }
                 dobhv.objectInfo = ois[i];
-
             }
         }
     }
@@ -323,8 +324,6 @@ public class UdpServer : MonoBehaviour {
                             }
                             
                             ois[objIdx] = oi;
-
-                            SceneInitialized.Invoke(); // TODO: Check
                         }
                     }
                 }

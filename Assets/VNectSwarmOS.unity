@@ -287,7 +287,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseLocalGroundControl: 1
-  ServerIp: 192.168.100.66
+  ServerIp: 192.168.60.146
   InfoText: {fileID: 373157530}
 --- !u!4 &94794960
 Transform:
@@ -1225,11 +1225,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de5d13b8e9020e64782b7f667150d3ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Ready: 0
+  MinScoreThreshold: 0.2
+  LocalSimulation: 0
+  BodyTracking: 1
+  DroneVelocity: 0.8
   vnectModel: {fileID: 1009339738}
   MappedJoints: 0700000002000000
   RefJoint: 24
-  OffsetPosition: {x: 0, y: 0.5, z: 0}
-  Scale: 1
+  MaxJointToRefDist: 250
+  yPercent: []
 --- !u!4 &445677649
 Transform:
   m_ObjectHideFlags: 0
@@ -3648,6 +3653,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7687b44907c454d279508e38c70960ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SceneInitialized:
+    m_PersistentCalls:
+      m_Calls: []
   Port: 6666
   DronePrefab: {fileID: 1000011089080024, guid: 990355805a2fb4f98be742543e7ae7c0,
     type: 3}
@@ -7851,7 +7859,7 @@ PrefabInstance:
     - target: {fileID: 8315583863143335206, guid: 376f47ea3b23a0c4390f513d69e1ca66,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8315583863143700616, guid: 376f47ea3b23a0c4390f513d69e1ca66,
         type: 3}
