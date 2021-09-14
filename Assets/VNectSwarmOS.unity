@@ -286,8 +286,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a9074c8e1ef948c3aeba8d8f009bee5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UseLocalGroundControl: 1
-  ServerIp: 192.168.60.146
+  UseLocalGroundControl: 0
+  ServerIp: 192.168.102.66
   InfoText: {fileID: 373157530}
 --- !u!4 &94794960
 Transform:
@@ -1232,8 +1232,8 @@ MonoBehaviour:
   DroneVelocity: 0.8
   vnectModel: {fileID: 1009339738}
   MappedJoints: 0700000002000000
-  RefJoint: 24
-  MaxJointToRefDist: 250
+  RefJoint: 26
+  MaxJointToRefDist: 100
   yPercent: []
 --- !u!4 &445677649
 Transform:

@@ -114,7 +114,7 @@ public class VNectSwarmOSWrapper : MonoBehaviour
         //yPercent = new float[MappedJoints.Length];
     }
 
-    void Update()
+    void FixedUpdate()
     {
         while (!MainThreadQueue.IsEmpty)
         {
@@ -160,7 +160,9 @@ public class VNectSwarmOSWrapper : MonoBehaviour
             Vector3 targetPosition = diff.Remap(new Vector3(-MaxJointToRefDist, -MaxJointToRefDist, -MaxJointToRefDist), new Vector3(MaxJointToRefDist, MaxJointToRefDist, MaxJointToRefDist),
                 new Vector3(-innerRadius, -innerRadius, -innerRadius), new Vector3(innerRadius, innerRadius, innerRadius));
 
-            targetPosition = targetPosition + mid; // midFloor;
+            targetPosition = new Vector3(-targetPosition.x, targetPosition.y, targetPosition.z);
+
+            targetPosition = targetPosition + mid;
             if (i == 0)
                 print(targetPosition);
 
@@ -170,11 +172,12 @@ public class VNectSwarmOSWrapper : MonoBehaviour
 
             if (!LocalSimulation && drones.Length >= MappedJoints.Length)
             {
-                var m_curTarget = Util.ClampToBoundaries(dronePos[i], Main.Instance.BoundingVolMin, Main.Instance.BoundingVolMax);
-                //var m_curTarget = dronePos[i];
-                m_curTarget = Util.ClampToMinHeight(m_curTarget, Main.Instance.MinimumFlightHeight + Main.Instance.BoundingVolMin.y);
-                var tgt = Util.ConvertToGcCoords(Util.Vec3ToVec4(m_curTarget, DroneVelocity));
-                TcpMgr.Instance.CmdExtWaypointFollow(Util.SingleIdToSet(drones[i].DroneId()), tgt, 0.0f);
+                drones[i].SetTargetPosition(dronePos[i], DroneVelocity);
+                //var m_curTarget = Util.ClampToBoundaries(dronePos[i], Main.Instance.BoundingVolMin, Main.Instance.BoundingVolMax);
+                ////var m_curTarget = dronePos[i];
+                //m_curTarget = Util.ClampToMinHeight(m_curTarget, Main.Instance.MinimumFlightHeight + Main.Instance.BoundingVolMin.y);
+                //var tgt = Util.ConvertToGcCoords(Util.Vec3ToVec4(m_curTarget, DroneVelocity));
+                //TcpMgr.Instance.CmdExtWaypointFollow(Util.SingleIdToSet(drones[i].DroneId()), tgt, 0.0f);
             }
         }
     }
@@ -184,7 +187,7 @@ public class VNectSwarmOSWrapper : MonoBehaviour
         foreach (var pos in dronePos)
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(pos, 0.25f);
+            Gizmos.DrawWireSphere(pos, 0.25f);
             //print(pos);
         }
     }
