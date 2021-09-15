@@ -14,12 +14,8 @@ public class AnimTgtBhv : MonoBehaviour {
 
     private TrailRenderer m_lineRenderer;
 
-    private ChangeColorBeatDetection changeColorBeat;
 
-    private void Start()
-    {
-        changeColorBeat = FindObjectOfType<ChangeColorBeatDetection>();
-    }
+
 
     private void Update() {
 
@@ -79,9 +75,6 @@ public class AnimTgtBhv : MonoBehaviour {
         //    Debug.Log("bot " + targetId + " rev " + flags);
         //TcpMgr.Instance.CmdExtWaypointFollow(ids, v, yawInDeg, flags);
 
-        Color _droneColor = changeColorBeat.GetDroneColor();
-
-        TcpMgr.Instance.CmdExtWaypointFollowColor(ids, v, yawInDeg, _droneColor /*UI_ManualColor.MANUAL_COLOR*/, flags);
     }
 
     public void AnimationDone () {

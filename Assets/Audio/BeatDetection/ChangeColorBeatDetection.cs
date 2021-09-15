@@ -110,10 +110,13 @@ public class ChangeColorBeatDetection : MonoBehaviour
 		}
 
 		alpha -= decadence;
-		if (alpha <= 0.5f) alpha = 0.5f;
-		colorDroneRender.material.color = new Color(droneColor.r, droneColor.g, droneColor.b, alpha);
+		//if (alpha <= 0.5f) alpha = 0.5f;
+		droneColor = new Color(droneColor.r, droneColor.g, droneColor.b, 1.0f);
+		//Color outColor = droneColor;
+		//outColor *= alpha;
+		colorDroneRender.material.color = droneColor;
 
 	}
 
-	public Color GetDroneColor() { return droneColor; }
+	public Color GetDroneColor() { return droneColor * alpha; }
 }

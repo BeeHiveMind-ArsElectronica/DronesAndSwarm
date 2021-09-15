@@ -19,6 +19,7 @@ public class DroneTargetBhv : MonoBehaviour
     private BoundingVolBhv m_boundingVol;
     private Vector3 _lastTargetPos;
     private float _droneVelocity;
+    private ChangeColorBeatDetection changeColorBeat;
 
     // Use this for initialization
     void Start()
@@ -26,6 +27,10 @@ public class DroneTargetBhv : MonoBehaviour
         m_boundingVol = FindObjectOfType<BoundingVolBhv>();
         drb = GetComponent<DroneRepelBhv>();
         rb = GetComponent<Rigidbody>();
+
+        // Bee
+        changeColorBeat = FindObjectOfType<ChangeColorBeatDetection>();
+
     }
 
     public int DroneId()
@@ -156,7 +161,12 @@ public class DroneTargetBhv : MonoBehaviour
 
             if (_lastGcCoords != Vector4.negativeInfinity)
             {
-                TcpMgr.Instance.CmdExtWaypointFollow(Util.SingleIdToSet(DroneId()), _lastGcCoords, 0.0f);
+                // Bee
+                Color _droneColor = changeColorBeat.GetDroneColor();
+                TcpMgr.Instance.CmdExtWaypointFollowColor(Util.SingleIdToSet(DroneId()), _lastGcCoords, 0.0f, _droneColor);
+
+
+
             }
         }
     }

@@ -21,7 +21,7 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField] [Range(0f, 1f)]  float _offset;
 
-    void Start()
+    void Awake()
     {
 
         audio_source = GetComponent<AudioSource>();
