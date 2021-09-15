@@ -6,7 +6,7 @@ public class AudioManager : MonoBehaviour
 {
 
     [SerializeField] [Range(0f,1f)] private float volume;
-    [SerializeField] [Range(0f,3f)] private float pitch;
+    [SerializeField] [Range(0f,3f)] public float pitch;
 
     private AudioSource audio_source;
     [SerializeField] private AudioClip clip;
@@ -15,6 +15,9 @@ public class AudioManager : MonoBehaviour
 
     public GameObject visualDebugVolume;
     public GameObject visualDebugPitch;
+
+    [SerializeField] [Range(0, 10)] private float pitch_treshold = 10;
+    [SerializeField] [Range(0, 10)] private float volume_threshold = 10;
 
     void Start()
     {
@@ -56,6 +59,7 @@ public class AudioManager : MonoBehaviour
 
         volume = average * 10;
         Debug.Log("Volume: " + volume);
+
         audio_source.volume = volume;
         audio_source.pitch = pitch;
     }
@@ -63,10 +67,14 @@ public class AudioManager : MonoBehaviour
     void LeftHandVolumeRightHandPitch()
     {
         float[] _heightJoints = wrapper.GetYPercent();
-        volume = _heightJoints[0] * 10;
-        pitch = _heightJoints[1] * 10;
+        volume = _heightJoints[0] * volume_threshold;
+        pitch = _heightJoints[1] * pitch_treshold;
 
+        if (volume >= 1) volume = 1;
+        if (volume <= 0.2f) volume = 0.2f;
         audio_source.volume = volume;
+        if (pitch >= 3) pitch = 3;
+        if (pitch <= 1f) pitch = 1f;
         audio_source.pitch = pitch;
     }
 

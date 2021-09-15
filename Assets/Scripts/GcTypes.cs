@@ -84,6 +84,8 @@ namespace GcTypes {
 
         CMD_EXT_TIMECODE                 = 0xD0,
         CMD_EXT_TIMECODE_ACTIVE          = 0xD1,
+
+        CMD_EXT_WAYPOINT_FOLLOW_COLOR    = 0xD2,
     }
 
     public enum DroneState : int

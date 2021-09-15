@@ -992,6 +992,47 @@ public class TcpMgr : MonoBehaviour
         }
     }
 
+
+    public void CmdExtWaypointFollowColor(HashSet<int> ids, Vector4 waypointAndSpeed, float yawInDeg,
+            Vector4 color, int flags = 0, bool useReducedRate = false)
+    {
+        foreach (int id in ids)
+        {
+            NetCmdRecordFloat nc = new NetCmdRecordFloat();
+            nc.type = (int)GcTypes.NetCmdType.CMD_EXT_WAYPOINT_FOLLOW_COLOR;
+            nc.context = id;//IdSetToBitmask(ids);
+            nc.floatVecParam[0] = waypointAndSpeed.x;
+            nc.floatVecParam[1] = waypointAndSpeed.y;
+            nc.floatVecParam[2] = waypointAndSpeed.z;
+            nc.floatVecParam[3] = waypointAndSpeed.w;
+            nc.intParam1 = Util.YawInDegE100(yawInDeg);
+            nc.intParam2 = flags;
+
+            NetCmdRecordFloat ncParam = new NetCmdRecordFloat();
+            ncParam.type = (int)GcTypes.NetCmdType.EXT_PARAM_1;
+            ncParam.context = id;//IdSetToBitmask(ids);
+            ncParam.floatVecParam[0] = color.x;
+            ncParam.floatVecParam[1] = color.y;
+            ncParam.floatVecParam[2] = color.z;
+            ncParam.floatVecParam[3] = color.w;
+
+
+            if (Connected())
+            {
+                if (useReducedRate)
+                {
+                    SendWaypointFollowWithReducedRate(id, nc);
+                }
+                else
+                {
+                    WriteData(ncParam);
+                    WriteData(nc);
+                    SetPreliminaryNonIdle(nc.context);
+                }
+            }
+        }
+    }
+
     private void SendWaypointFollowWithReducedRate(int id, NetCmdRecordFloat nc)
     {
         if (followWaypointStreamRates.ContainsKey(id))
