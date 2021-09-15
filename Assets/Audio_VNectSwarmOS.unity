@@ -1228,8 +1228,8 @@ MonoBehaviour:
   Ready: 0
   MinScoreThreshold: 0.3
   LocalSimulation: 1
+  BodyTracking: 0
   DroneVelocity: 0.8
-  DebugMode: 1
   vnectModel: {fileID: 1009339738}
   MappedJoints: 0700000002000000
   RefJoint: 24
@@ -4051,7 +4051,6 @@ GameObject:
   - component: {fileID: 1338367804}
   - component: {fileID: 1338367803}
   - component: {fileID: 1338367802}
-  - component: {fileID: 1338367805}
   m_Layer: 0
   m_Name: AudioManager
   m_TagString: Untagged
@@ -4078,7 +4077,8 @@ MonoBehaviour:
   visualDebugVolume: {fileID: 2145683577}
   visualDebugPitch: {fileID: 1600615747}
   pitch_treshold: 4
-  volume_threshold: 0.9
+  volume_threshold: 1.2
+  _offset: 0
 --- !u!82 &1338367803
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4192,27 +4192,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1338367805
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1338367801}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f42fa879ba59c847acb931427e77f69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioSource: {fileID: 1338367803}
-  bufferSize: 1024
-  gThresh: 0.1
-  onBeat:
-    m_PersistentCalls:
-      m_Calls: []
-  onSpectrum:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!4 &1341829358 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8315583863143700808, guid: 376f47ea3b23a0c4390f513d69e1ca66,
