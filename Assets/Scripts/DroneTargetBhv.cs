@@ -7,14 +7,25 @@ public class DroneTargetBhv : MonoBehaviour
 
     public TextMeshPro textMesh;
     public LineRenderer ObjTgtLine;
+    private DroneRepelBhv drb;
+    private Rigidbody rb;
+
     string m_currentStateString;
 
+    private Vector3 screenPoint;
+    private Vector3 offset;
+    private Vector4 _lastGcCoords;
+
     private BoundingVolBhv m_boundingVol;
+    private Vector3 _lastTargetPos;
+    private float _droneVelocity;
 
     // Use this for initialization
     void Start()
     {
         m_boundingVol = FindObjectOfType<BoundingVolBhv>();
+        drb = GetComponent<DroneRepelBhv>();
+        rb = GetComponent<Rigidbody>();
     }
 
     public int DroneId()
@@ -67,11 +78,10 @@ public class DroneTargetBhv : MonoBehaviour
         textMesh.gameObject.SetActive(active);
     }
 
-    private Vector3 screenPoint;
-    private Vector3 offset;
-
     void OnMouseDown()
     {
+        _lastGcCoords = Vector4.negativeInfinity;
+
         screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
         offset = gameObject.transform.position
             - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,
@@ -97,6 +107,16 @@ public class DroneTargetBhv : MonoBehaviour
         TcpMgr.Instance.CmdExtWaypointFollow(Util.SingleIdToSet(DroneId()), v, 0);
     }
 
+    private void OnTriggerStay(Collider other)
+    {
+        DroneTargetBhv dtb = other.GetComponent<DroneTargetBhv>();
+        if (dtb)
+        {
+            var diffNorm = (transform.position - dtb.transform.position).normalized;
+
+        }
+    }
+
     void OnMouseUp()
     {
 
@@ -114,6 +134,30 @@ public class DroneTargetBhv : MonoBehaviour
                 transform.position.z, Main.Instance.BoundingVolMin.z, Main.Instance.BoundingVolMax.z);
 
             transform.position = new Vector3(x, y, z);
+        }
+    }
+
+    public void SetTargetPosition(Vector3 position, float velocity)
+    {
+        _lastTargetPos = position;
+        _droneVelocity = velocity;
+    }
+
+    private void FixedUpdate()
+    {
+        if (drb.CollidingObjs.Count <= 0)
+        {
+            rb.MovePosition(_lastTargetPos);
+
+            var m_curTarget = Util.ClampToBoundaries(transform.position, Main.Instance.BoundingVolMin, Main.Instance.BoundingVolMax);
+            //var m_curTarget = dronePos[i];
+            m_curTarget = Util.ClampToMinHeight(m_curTarget, Main.Instance.MinimumFlightHeight + Main.Instance.BoundingVolMin.y);
+            _lastGcCoords = Util.ConvertToGcCoords(Util.Vec3ToVec4(m_curTarget, _droneVelocity));
+
+            if (_lastGcCoords != Vector4.negativeInfinity)
+            {
+                TcpMgr.Instance.CmdExtWaypointFollow(Util.SingleIdToSet(DroneId()), _lastGcCoords, 0.0f);
+            }
         }
     }
 }
